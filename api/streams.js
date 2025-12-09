@@ -7,26 +7,48 @@ async function getOAuthToken() {
     return cachedToken;
   }
 
+  // Check if environment variables are set
+  if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
+    console.error('Missing Twitch credentials:', {
+      hasClientId: !!process.env.TWITCH_CLIENT_ID,
+      hasClientSecret: !!process.env.TWITCH_CLIENT_SECRET
+    });
+    throw new Error('Twitch API credentials not configured');
+  }
+
   const params = new URLSearchParams({
     client_id: process.env.TWITCH_CLIENT_ID,
     client_secret: process.env.TWITCH_CLIENT_SECRET,
     grant_type: 'client_credentials'
   });
 
-  const response = await fetch('https://id.twitch.tv/oauth2/token', {
-    method: 'POST',
-    body: params
-  });
+  console.log('Requesting OAuth token from Twitch...');
 
-  if (!response.ok) {
-    throw new Error('Failed to get OAuth token');
+  try {
+    const response = await fetch('https://id.twitch.tv/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString()
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Twitch OAuth error:', response.status, errorText);
+      throw new Error(`Failed to get OAuth token: ${response.status} ${errorText}`);
+    }
+
+    const data = await response.json();
+    cachedToken = data.access_token;
+    tokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 min early
+
+    console.log('OAuth token retrieved successfully');
+    return cachedToken;
+  } catch (error) {
+    console.error('Error getting OAuth token:', error);
+    throw error;
   }
-
-  const data = await response.json();
-  cachedToken = data.access_token;
-  tokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 min early
-
-  return cachedToken;
 }
 
 async function fetchStreamPage(token, gameId, cursor) {
@@ -41,6 +63,8 @@ async function fetchStreamPage(token, gameId, cursor) {
 
   const url = `https://api.twitch.tv/helix/streams?${params}`;
   
+  console.log('Fetching streams from:', url);
+
   const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -49,7 +73,9 @@ async function fetchStreamPage(token, gameId, cursor) {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch streams');
+    const errorText = await response.text();
+    console.error('Twitch API error:', response.status, errorText);
+    throw new Error(`Failed to fetch streams: ${response.status}`);
   }
 
   return await response.json();
@@ -89,8 +115,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'game_id is required' });
     }
 
+    console.log('Fetching streams for game_id:', game_id);
+
     const token = await getOAuthToken();
     const data = await fetchStreamPage(token, game_id, cursor);
+
+    console.log('Successfully fetched streams:', data.data.length);
 
     return res.status(200).json(data);
   } catch (error) {

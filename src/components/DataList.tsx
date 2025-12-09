@@ -30,13 +30,7 @@ interface GameCategory {
 
 const categories: GameCategory[] = [
   { id: '18122', name: 'World of Warcraft' },
-  { id: '21779', name: 'League of Legends' },
-  { id: '27471', name: 'Minecraft' },
-  { id: '516575', name: 'VALORANT' },
-  { id: '33214', name: 'Fortnite' },
   { id: '509658', name: 'Just Chatting' },
-  { id: '32982', name: 'Grand Theft Auto V' },
-  { id: '511224', name: 'Apex Legends' }
 ];
 
 const fetchStreams = async (
@@ -181,10 +175,10 @@ const DataList = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-900 w-full m-0 p-0 overflow-hidden flex flex-col">
+    <div className="h-screen bg-gray-900 m-0 p-0 overflow-hidden flex flex-col" style={{ width: '100%', maxWidth: '100%' }}>
       {/* Header - Fixed to top, full width */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-lg border-b border-gray-700">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-lg border-b border-gray-700" style={{ width: '100%', maxWidth: '100%' }}>
+        <div className="px-1 py-4" style={{ width: '100%', maxWidth: '100%' }}>
           <div className="space-y-4">
             {/* Title Row */}
             <div className="flex items-center justify-between">
@@ -230,14 +224,14 @@ const DataList = () => {
       </header>
 
       {/* Main Content - Scrollable area with padding for fixed header */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="pt-56 sm:pt-52 md:pt-48 w-full px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden" style={{ width: '100%', maxWidth: '100%' }}>
+        <div className="pt-56 sm:pt-52 md:pt-48 px-1 py-4" style={{ width: '100%', maxWidth: '100%' }}>
           {displayedStreams.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-400 text-lg">No streams found</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
               {displayedStreams.map((stream) => (
                 <a
                   key={`${stream.id}-${stream.user_name}`}
@@ -247,11 +241,11 @@ const DataList = () => {
                   className="group bg-gray-800 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-200 hover:-translate-y-1 hover:ring-2 hover:ring-purple-500 block overflow-hidden"
                 >
                   {/* Thumbnail Container */}
-                  <div className="relative w-full aspect-video">
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                     <img
-                      src={stream.thumbnail_url.replace('{width}', '440').replace('{height}', '248')}
+                      src={stream.thumbnail_url.replace('{width}', '640').replace('{height}', '360')}
                       alt={stream.title}
-                      className="w-full h-full object-cover"
+                      className="absolute top-0 left-0 w-full h-full object-cover"
                       loading="lazy"
                     />
                     {/* LIVE badge */}
@@ -265,14 +259,14 @@ const DataList = () => {
                   </div>
                   
                   {/* Stream Info */}
-                  <div className="p-3 space-y-1">
-                    <h3 className="font-semibold text-white group-hover:text-purple-400 transition truncate">
+                  <div className="p-3 space-y-1.5">
+                    <h3 className="font-bold text-white group-hover:text-purple-400 transition truncate text-base">
                       {stream.user_name}
                     </h3>
-                    <p className="text-sm text-gray-300 line-clamp-2 leading-snug">
+                    <p className="text-sm text-gray-300 line-clamp-3 leading-relaxed min-h-[3rem]">
                       {stream.title}
                     </p>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="text-xs text-gray-400 truncate pt-1">
                       {stream.game_name}
                     </p>
                   </div>

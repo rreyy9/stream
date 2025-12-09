@@ -1,6 +1,32 @@
 import { useState, useEffect } from 'react';
-import { fetchStreams } from '../services/api';
-import type { TwitchStream, GameCategory } from '../types/twitch';
+
+interface TwitchStream {
+  id: string;
+  user_id: string;
+  user_name: string;
+  game_id: string;
+  game_name: string;
+  type: string;
+  title: string;
+  viewer_count: number;
+  started_at: string;
+  language: string;
+  thumbnail_url: string;
+  tag_ids: string[];
+  is_mature: boolean;
+}
+
+interface TwitchStreamsResponse {
+  data: TwitchStream[];
+  pagination: {
+    cursor?: string;
+  };
+}
+
+interface GameCategory {
+  id: string;
+  name: string;
+}
 
 const categories: GameCategory[] = [
   { id: '18122', name: 'World of Warcraft' },
@@ -12,6 +38,25 @@ const categories: GameCategory[] = [
   { id: '32982', name: 'Grand Theft Auto V' },
   { id: '511224', name: 'Apex Legends' }
 ];
+
+const fetchStreams = async (
+  gameId: string, 
+  cursor?: string
+): Promise<TwitchStreamsResponse> => {
+  const params = new URLSearchParams({ game_id: gameId });
+  
+  if (cursor) {
+    params.append('cursor', cursor);
+  }
+
+  const response = await fetch(`/api/streams?${params}`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch streams');
+  }
+
+  return await response.json();
+};
 
 const DataList = () => {
   const [streams, setStreams] = useState<TwitchStream[]>([]);
@@ -91,18 +136,18 @@ const DataList = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full border border-gray-700">
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full">
-              <svg className="w-8 h-8 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-900 rounded-full">
+              <svg className="w-8 h-8 text-purple-400 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900">Loading streams...</h3>
-            <p className="text-gray-600">{loadingCount} streams loaded</p>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <h3 className="text-xl font-semibold text-white">Loading streams...</h3>
+            <p className="text-gray-400">{loadingCount} streams loaded</p>
+            <div className="w-full bg-gray-700 rounded-full h-2">
               <div className="bg-purple-600 h-2 rounded-full transition-all duration-300 animate-pulse" style={{ width: '50%' }}></div>
             </div>
           </div>
@@ -113,16 +158,16 @@ const DataList = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full border border-gray-700">
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full">
-              <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-900 rounded-full">
+              <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900">Error loading streams</h3>
-            <p className="text-gray-600">{error}</p>
+            <h3 className="text-xl font-semibold text-white">Error loading streams</h3>
+            <p className="text-gray-400">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="w-full bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition"
@@ -136,27 +181,27 @@ const DataList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="h-screen bg-gray-900 w-full m-0 p-0 overflow-hidden flex flex-col">
+      {/* Header - Fixed to top, full width */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 shadow-lg border-b border-gray-700">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
           <div className="space-y-4">
-            {/* Title */}
+            {/* Title Row */}
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">Live Streams</h1>
-              <span className="text-gray-600">{displayedStreams.length} streams</span>
+              <h1 className="text-2xl font-bold text-white">Live Streams</h1>
+              <span className="text-gray-400 text-sm">{displayedStreams.length} streams</span>
             </div>
             
-            {/* Categories */}
+            {/* Categories Row */}
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     selectedCategory === category.id
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/50'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                   }`}
                 >
                   {category.name}
@@ -164,76 +209,79 @@ const DataList = () => {
               ))}
             </div>
 
-            {/* Search and Sort */}
+            {/* Search and Sort Row */}
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 placeholder="Search streams..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-white placeholder-gray-400"
               />
               <button
                 onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                className="px-6 py-2 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 text-sm font-medium text-gray-300 whitespace-nowrap"
               >
                 Sort: Viewers {sortOrder === 'desc' ? '↓' : '↑'}
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Stream Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {displayedStreams.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No streams found</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {displayedStreams.map((stream) => (
-              <a
-                key={`${stream.id}-${stream.user_name}`}
-                href={`https://www.twitch.tv/${stream.user_name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white rounded-lg shadow hover:shadow-lg transition-all duration-200 hover:-translate-y-1 block"
-              >
-                {/* Thumbnail Container with proper aspect ratio */}
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <img
-                    src={stream.thumbnail_url.replace('{width}', '440').replace('{height}', '248')}
-                    alt={stream.title}
-                    className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
-                  />
-                  {/* LIVE badge */}
-                  <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">
-                    LIVE
+      {/* Main Content - Scrollable area with padding for fixed header */}
+      <main className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="pt-56 sm:pt-52 md:pt-48 w-full px-4 sm:px-6 lg:px-8 py-6">
+          {displayedStreams.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">No streams found</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+              {displayedStreams.map((stream) => (
+                <a
+                  key={`${stream.id}-${stream.user_name}`}
+                  href={`https://www.twitch.tv/${stream.user_name}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-gray-800 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-200 hover:-translate-y-1 hover:ring-2 hover:ring-purple-500 block overflow-hidden"
+                >
+                  {/* Thumbnail Container */}
+                  <div className="relative w-full aspect-video">
+                    <img
+                      src={stream.thumbnail_url.replace('{width}', '440').replace('{height}', '248')}
+                      alt={stream.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    {/* LIVE badge */}
+                    <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold uppercase">
+                      Live
+                    </div>
+                    {/* Viewer count */}
+                    <div className="absolute top-2 right-2 bg-black bg-opacity-80 text-white px-2 py-1 rounded text-xs font-medium">
+                      {stream.viewer_count.toLocaleString()}
+                    </div>
                   </div>
-                  {/* Viewer count */}
-                  <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white px-2 py-0.5 rounded text-xs">
-                    {stream.viewer_count.toLocaleString()} viewers
+                  
+                  {/* Stream Info */}
+                  <div className="p-3 space-y-1">
+                    <h3 className="font-semibold text-white group-hover:text-purple-400 transition truncate">
+                      {stream.user_name}
+                    </h3>
+                    <p className="text-sm text-gray-300 line-clamp-2 leading-snug">
+                      {stream.title}
+                    </p>
+                    <p className="text-xs text-gray-400 truncate">
+                      {stream.game_name}
+                    </p>
                   </div>
-                </div>
-                
-                {/* Content */}
-                <div className="p-3 space-y-1">
-                  <h3 className="font-semibold text-gray-900 hover:text-purple-600 transition truncate">
-                    {stream.user_name}
-                  </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {stream.title}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {stream.game_name}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };

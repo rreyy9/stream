@@ -36,13 +36,11 @@ const DataList = () => {
         let cursor: string | undefined = undefined;
         let currentPage = 0;
 
-        // Fetch first page
         let response = await fetchStreams(selectedCategory);
         allStreams.push(...response.data);
         setLoadingCount(allStreams.length);
         cursor = response.pagination.cursor;
 
-        // Fetch remaining pages with live updates
         while (cursor && currentPage < 10) {
           await new Promise(resolve => setTimeout(resolve, 100));
           
@@ -52,12 +50,9 @@ const DataList = () => {
           cursor = response.pagination.cursor;
           currentPage++;
 
-          if (allStreams.length >= 1000) {
-            break;
-          }
+          if (allStreams.length >= 1000) break;
         }
 
-        // Remove duplicates
         const uniqueStreams = Array.from(
           new Map(allStreams.map(s => [s.id, s])).values()
         );
@@ -94,42 +89,42 @@ const DataList = () => {
     setDisplayedStreams(filtered);
   }, [streams, searchTerm, sortOrder]);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const toggleSort = () => {
-    setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
-  };
-
-  const handleCategoryChange = (categoryId: string) => {
-    setSelectedCategory(categoryId);
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-12 max-w-md w-full border border-white/20">
-          <div className="text-center space-y-6">
-            {/* Animated rings */}
-            <div className="relative inline-flex items-center justify-center">
-              <div className="w-24 h-24 rounded-full border-4 border-white/30 absolute animate-ping"></div>
-              <div className="w-20 h-20 rounded-full border-4 border-white/50 absolute animate-pulse"></div>
-              <div className="w-16 h-16 rounded-full border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-white">Loading Streams</h3>
-              <p className="text-white/80 text-lg font-semibold">{loadingCount} streams loaded</p>
-              <p className="text-white/60 text-sm">Please wait...</p>
-            </div>
-
-            {/* Progress dots */}
-            <div className="flex justify-center space-x-2">
-              <div className="w-3 h-3 bg-white rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-3 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-            </div>
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: '#f3f4f6'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '2rem',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          textAlign: 'center',
+          maxWidth: '400px'
+        }}>
+          <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+            Loading Streams...
+          </div>
+          <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem' }}>
+            {loadingCount} streams loaded
+          </div>
+          <div style={{
+            width: '100%',
+            height: '8px',
+            backgroundColor: '#e5e7eb',
+            borderRadius: '4px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              backgroundColor: '#8b5cf6',
+              width: '50%',
+              animation: 'pulse 2s infinite'
+            }}></div>
           </div>
         </div>
       </div>
@@ -138,153 +133,219 @@ const DataList = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-500 via-pink-500 to-orange-500 flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-12 max-w-md w-full border border-white/20">
-          <div className="text-center space-y-6">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full">
-              <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-white">Connection Error</h3>
-              <p className="text-white/80">{error}</p>
-            </div>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full bg-white text-purple-600 font-bold py-3 px-6 rounded-xl hover:bg-white/90 transition shadow-lg"
-            >
-              Retry
-            </button>
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: '#f3f4f6'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '2rem',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#dc2626', marginBottom: '1rem' }}>
+            Error
           </div>
+          <div style={{ color: '#6b7280', marginBottom: '1rem' }}>{error}</div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              backgroundColor: '#8b5cf6',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '600'
+            }}
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Header with glass effect */}
-      <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="space-y-6">
-            {/* Logo and Title */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">StreamList</h1>
-                  <p className="text-sm text-purple-300">{displayedStreams.length} live now</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Category chips */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryChange(category.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                    selectedCategory === category.id
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50'
-                      : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+      {/* Header */}
+      <div style={{
+        position: 'sticky',
+        top: 0,
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '1rem',
+        zIndex: 50
+      }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+          {/* Title */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>Live Streams</h1>
+            <span style={{ color: '#6b7280' }}>{displayedStreams.length} streams</span>
+          </div>
 
-            {/* Search and Sort */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1 relative">
-                <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search streams or streamers..."
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  className="w-full pl-12 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                />
-              </div>
+          {/* Categories */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            {categories.map((category) => (
               <button
-                onClick={toggleSort}
-                className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all flex items-center justify-center space-x-2"
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: '20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  backgroundColor: selectedCategory === category.id ? '#8b5cf6' : '#f3f4f6',
+                  color: selectedCategory === category.id ? 'white' : '#374151'
+                }}
               >
-                <span className="font-semibold">Viewers</span>
-                <svg className={`w-5 h-5 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                {category.name}
               </button>
-            </div>
+            ))}
+          </div>
+
+          {/* Search and Sort */}
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              placeholder="Search streams..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                flex: 1,
+                minWidth: '200px',
+                padding: '0.5rem 1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '0.875rem'
+              }}
+            />
+            <button
+              onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+              style={{
+                padding: '0.5rem 1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: 'white',
+                cursor: 'pointer',
+                fontSize: '0.875rem'
+              }}
+            >
+              Viewers {sortOrder === 'desc' ? '↓' : '↑'}
+            </button>
           </div>
         </div>
       </div>
 
       {/* Stream Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '1.5rem' }}>
         {displayedStreams.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-4">
-              <svg className="w-10 h-10 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No streams found</h3>
-            <p className="text-white/60">Try a different search or category</p>
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+            No streams found
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '1.5rem'
+          }}>
             {displayedStreams.map((stream) => (
               <a
                 key={`${stream.id}-${stream.user_name}`}
                 href={`https://www.twitch.tv/${stream.user_name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white/5 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-white/10"
+                style={{
+                  backgroundColor: 'white',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  display: 'block'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                }}
               >
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={stream.thumbnail_url.replace('{width}', '320').replace('{height}', '180')} 
+                {/* Thumbnail */}
+                <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: '#000' }}>
+                  <img
+                    src={stream.thumbnail_url.replace('{width}', '440').replace('{height}', '248')}
                     alt={stream.title}
-                    className="w-full h-44 object-cover group-hover:scale-110 transition-transform duration-300"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
                   />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  
-                  {/* Live badge */}
-                  <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1 shadow-lg">
-                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    <span>LIVE</span>
+                  {/* LIVE badge */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '8px',
+                    left: '8px',
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold'
+                  }}>
+                    LIVE
                   </div>
-                  
                   {/* Viewer count */}
-                  <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center space-x-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
-                    </svg>
-                    <span>{stream.viewer_count.toLocaleString()}</span>
+                  <div style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    backgroundColor: 'rgba(0,0,0,0.7)',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem'
+                  }}>
+                    {stream.viewer_count.toLocaleString()} viewers
                   </div>
                 </div>
-                
-                <div className="p-4 space-y-2">
-                  <h3 className="font-bold text-white group-hover:text-purple-400 transition truncate">
+
+                {/* Content */}
+                <div style={{ padding: '1rem' }}>
+                  <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>
                     {stream.user_name}
-                  </h3>
-                  <p className="text-sm text-white/70 line-clamp-2 leading-relaxed">
+                  </div>
+                  <div style={{
+                    fontSize: '0.875rem',
+                    color: '#6b7280',
+                    marginBottom: '0.5rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical'
+                  }}>
                     {stream.title}
-                  </p>
-                  <span className="inline-block text-xs px-2 py-1 bg-purple-500/30 text-purple-300 rounded-lg">
+                  </div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: '#9ca3af'
+                  }}>
                     {stream.game_name}
-                  </span>
+                  </div>
                 </div>
               </a>
             ))}

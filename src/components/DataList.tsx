@@ -91,40 +91,20 @@ const DataList = () => {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#f3f4f6'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          textAlign: 'center',
-          maxWidth: '400px'
-        }}>
-          <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-            Loading Streams...
-          </div>
-          <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem' }}>
-            {loadingCount} streams loaded
-          </div>
-          <div style={{
-            width: '100%',
-            height: '8px',
-            backgroundColor: '#e5e7eb',
-            borderRadius: '4px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              height: '100%',
-              backgroundColor: '#8b5cf6',
-              width: '50%',
-              animation: 'pulse 2s infinite'
-            }}></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full">
+              <svg className="w-8 h-8 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">Loading streams...</h3>
+            <p className="text-gray-600">{loadingCount} streams loaded</p>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="bg-purple-600 h-2 rounded-full transition-all duration-300 animate-pulse" style={{ width: '50%' }}></div>
+            </div>
           </div>
         </div>
       </div>
@@ -133,219 +113,121 @@ const DataList = () => {
 
   if (error) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#f3f4f6'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          textAlign: 'center'
-        }}>
-          <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#dc2626', marginBottom: '1rem' }}>
-            Error
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full">
+              <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">Error loading streams</h3>
+            <p className="text-gray-600">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition"
+            >
+              Try Again
+            </button>
           </div>
-          <div style={{ color: '#6b7280', marginBottom: '1rem' }}>{error}</div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              backgroundColor: '#8b5cf6',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              borderRadius: '6px',
-              border: 'none',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
-          >
-            Retry
-          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        backgroundColor: 'white',
-        borderBottom: '1px solid #e5e7eb',
-        padding: '1rem',
-        zIndex: 50
-      }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          {/* Title */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>Live Streams</h1>
-            <span style={{ color: '#6b7280' }}>{displayedStreams.length} streams</span>
-          </div>
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="space-y-4">
+            {/* Title */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-gray-900">Live Streams</h1>
+              <span className="text-gray-600">{displayedStreams.length} streams</span>
+            </div>
+            
+            {/* Categories */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                    selectedCategory === category.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
 
-          {/* Categories */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-            {categories.map((category) => (
+            {/* Search and Sort */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                placeholder="Search streams..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              />
               <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '20px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: '500',
-                  backgroundColor: selectedCategory === category.id ? '#8b5cf6' : '#f3f4f6',
-                  color: selectedCategory === category.id ? 'white' : '#374151'
-                }}
+                onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium"
               >
-                {category.name}
+                Sort: Viewers {sortOrder === 'desc' ? '↓' : '↑'}
               </button>
-            ))}
-          </div>
-
-          {/* Search and Sort */}
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <input
-              type="text"
-              placeholder="Search streams..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                flex: 1,
-                minWidth: '200px',
-                padding: '0.5rem 1rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '0.875rem'
-              }}
-            />
-            <button
-              onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-              style={{
-                padding: '0.5rem 1rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: 'white',
-                cursor: 'pointer',
-                fontSize: '0.875rem'
-              }}
-            >
-              Viewers {sortOrder === 'desc' ? '↓' : '↑'}
-            </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Stream Grid */}
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '1.5rem' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {displayedStreams.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-            No streams found
+          <div className="text-center py-12">
+            <p className="text-gray-500">No streams found</p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1.5rem'
-          }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {displayedStreams.map((stream) => (
               <a
                 key={`${stream.id}-${stream.user_name}`}
                 href={`https://www.twitch.tv/${stream.user_name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  display: 'block'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                }}
+                className="bg-white rounded-lg shadow hover:shadow-lg transition-all duration-200 hover:-translate-y-1 block"
               >
-                {/* Thumbnail */}
-                <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: '#000' }}>
+                {/* Thumbnail Container with proper aspect ratio */}
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                   <img
                     src={stream.thumbnail_url.replace('{width}', '440').replace('{height}', '248')}
                     alt={stream.title}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
+                    className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
                   />
                   {/* LIVE badge */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '8px',
-                    left: '8px',
-                    backgroundColor: '#dc2626',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold'
-                  }}>
+                  <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">
                     LIVE
                   </div>
                   {/* Viewer count */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    backgroundColor: 'rgba(0,0,0,0.7)',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem'
-                  }}>
+                  <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white px-2 py-0.5 rounded text-xs">
                     {stream.viewer_count.toLocaleString()} viewers
                   </div>
                 </div>
-
+                
                 {/* Content */}
-                <div style={{ padding: '1rem' }}>
-                  <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>
+                <div className="p-3 space-y-1">
+                  <h3 className="font-semibold text-gray-900 hover:text-purple-600 transition truncate">
                     {stream.user_name}
-                  </div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    color: '#6b7280',
-                    marginBottom: '0.5rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical'
-                  }}>
+                  </h3>
+                  <p className="text-sm text-gray-600 line-clamp-2">
                     {stream.title}
-                  </div>
-                  <div style={{
-                    fontSize: '0.75rem',
-                    color: '#9ca3af'
-                  }}>
+                  </p>
+                  <p className="text-xs text-gray-500">
                     {stream.game_name}
-                  </div>
+                  </p>
                 </div>
               </a>
             ))}

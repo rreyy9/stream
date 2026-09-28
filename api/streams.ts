@@ -1,5 +1,5 @@
-import type { Stream, StreamsResponse } from '../src/types/twitch';
-import { cacheHeaders, createCache, errorResponse, helix } from './_lib/twitch';
+import type { Stream, StreamsResponse } from '../src/types/twitch.js';
+import { cacheHeaders, createCache, errorResponse, helix } from './_lib/twitch.js';
 
 export const PAGES_PER_CHUNK = 10; // 100 streams per page -> up to 1000 streams per request
 

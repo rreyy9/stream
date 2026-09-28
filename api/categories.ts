@@ -1,5 +1,5 @@
-import type { GameCategory } from '../src/types/twitch';
-import { cacheHeaders, createCache, errorResponse, helix } from './_lib/twitch';
+import type { GameCategory } from '../src/types/twitch.js';
+import { cacheHeaders, createCache, errorResponse, helix } from './_lib/twitch.js';
 
 const cached = createCache<GameCategory[]>(5 * 60_000);
 
